@@ -1,4 +1,4 @@
-from time import strftime
+from time import strftime,strptime
 from flask import Flask,request,jsonify
 import datetime
 
@@ -10,31 +10,30 @@ def get_hng_data():
                                   default='jAyJOet',
                                  )
     track = request.args.get('track',
-                             default='Backend',
+                             default='backend',                   
                             )
 
-    present_day = datetime.datetime.utcnow().strftime('%A   %D')
+    present_day =  datetime.datetime.utcnow().strftime('%A')
 
-    date = datetime.datetime.utcnow()
-    utc_time = strftime('%H:%M:%S UTC')
+    
 
     github_repo_url = 'https://github.com/jAyJOet/HNGx_Projects.git'
     github_file_url = 'https://github.com/jAyJOet/HNGx_Projects/blob/master/main.py'
 
 
     hngx_user={
-        "slackname": slack_name, 
-        "current day": present_day,
-        "current UTC_time": utc_time,
-        "Track": track,
+        "slack_name": slack_name, 
+        "current_day": present_day,
+        "utc_time": f'{datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")}',
+        "track": track,
         "github_file_url": github_file_url,
         "github_repo_url": github_repo_url,
-        "Status_code": 200,
+        "status_code": 200,
                                 }
     if not slack_name or not track:
         return jsonify({'error': 'Two arguments are required'}), 400
 
-    if slack_name == hngx_user['slackname'] and track == hngx_user['Track']:
+    if slack_name == hngx_user['slack_name'] and track == hngx_user['track']:
         return jsonify(hngx_user), 200
     else:
         return jsonify({'error': 'One or both parameters not found'}), 404
@@ -42,5 +41,5 @@ def get_hng_data():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5010, debug=False)
+    app.run(host='0.0.0.0', port=5010, debug=True)
 
